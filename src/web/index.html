@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>深海探测阵列 · 检查点屏障对齐回放台</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>深海探测阵列 · 检查点屏障对齐回放台</h1>
+    <div class="sub">多链路屏障（barrier）对齐 · Worker 三阶段持久化 · 崩溃重开只认完整发布的检查点</div>
+  </header>
+
+  <main>
+    <section class="panel" id="editor-panel">
+      <div class="panel-head">
+        <h2>① 事件录入（按捕获顺序，2–4 通道，最多 48 项）</h2>
+        <div class="btn-row">
+          <button id="btn-sample" type="button">载入示例</button>
+          <button id="btn-add-data" type="button">+ 数据</button>
+          <button id="btn-add-barrier" type="button">+ 屏障</button>
+          <button id="btn-add-fault" type="button">+ 故障</button>
+          <button id="btn-add-reopen" type="button">+ 重开</button>
+          <button id="btn-clear" type="button" class="ghost">清空</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="event-table">
+          <thead>
+            <tr>
+              <th>#</th><th>ID</th><th>类型</th><th>通道</th><th>序号 seq</th>
+              <th>检查点 cp</th><th>值 value</th><th>崩溃注入阶段</th><th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="hint">
+        规则：每通道 data 的 seq 必须连续递增；barrier 先到的通道，其后续 data 会被缓存，
+        直到所有通道同编号屏障到齐才封存并按原序释放缓存；fault 后写 reopen 模拟浏览器重开。
+        在屏障行选择“崩溃注入阶段 = intent / snapshot”，可模拟持久化中途断电。
+      </p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>② 回放</h2>
+        <div class="btn-row">
+          <button id="btn-run" type="button" class="primary">整段回放（Worker 内执行）</button>
+          <span id="run-status" class="status"></span>
+        </div>
+      </div>
+      <div id="validation-error" class="error-box hidden"></div>
+
+      <div id="results" class="hidden">
+        <h3>检查点封存清单</h3>
+        <div id="checkpoint-list" class="cp-list"></div>
+
+        <h3>逐步通道状态</h3>
+        <div class="step-controls">
+          <input id="step-slider" type="range" min="0" value="0" step="1" />
+          <span id="step-label"></span>
+        </div>
+        <div id="step-view"></div>
+
+        <h3>事件时间线</h3>
+        <ol id="timeline" class="timeline"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="/healthz">健康检查 /healthz</a>
+  </footer>
+
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>

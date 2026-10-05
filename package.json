@@ -1,0 +1,17 @@
+{
+  "name": "deep-sea-checkpoint-replay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "深海探测阵列多链路屏障对齐检查点与 Worker 持久化回放",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node src/server/server.js",
+    "test:unit": "node --test test/aligner.test.js test/replayer.test.js",
+    "test:smoke": "node --test test/http.smoke.test.js",
+    "verify": "node scripts/verify.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5"
+  }
+}

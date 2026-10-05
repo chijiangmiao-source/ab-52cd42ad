@@ -1,0 +1,28 @@
+services:
+  web:
+    build:
+      context: .
+      target: web
+    image: deep-sea-checkpoint-web:latest
+    environment:
+      # 可配置宿主端口：HOST_PORT 由 Compose 插值（.env 可覆盖）
+      PORT: "8080"
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  verify:
+    build:
+      context: .
+      target: verify
+    image: deep-sea-checkpoint-verify:latest
+    # 一次性服务：屏障/恢复/错误边界代码测试 + 页面构建 + HTTP 冒烟，退出码报告
+    restart: "no"
+    depends_on:
+      web:
+        condition: service_started
